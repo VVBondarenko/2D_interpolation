@@ -237,25 +237,6 @@ double f_dd_cup2(double X)
 	return (f_cup(X+0.03)-2.0*f_cup(X)+f_cup(X-0.03))/0.009;
 }
 
-double fourier_fup(double x, int n)
-{
-	int m,mmax,kmax;
-	double y,psin,k2,psin1,t;
-	mmax=20;
-	psin=1;
-	t=x/2;
-	psin1=sin(t)/t;
-	psin=pow(psin1,n);
-	t=x;
-	for(m=1;m<mmax;m++)
-	  {
-		  t=t/2;
-		  psin1=sin(t)/t;
-		  psin=psin*psin1;
-	  }
-	y=psin;
-	return y;
-}
 
 double f_fup(double x, int n)
 {
@@ -277,6 +258,25 @@ double f_fup(double x, int n)
 	return y;
 }
 
+double fourier_fup(double x, int n)
+{
+	int m,mmax,kmax;
+	double y,psin,k2,psin1,t;
+	mmax=20;
+	psin=1;
+	t=x/2;
+	psin1=sin(t)/t;
+	psin=pow(psin1,n);
+	t=x;
+	for(m=1;m<mmax;m++)
+	  {
+		  t=t/2;
+		  psin1=sin(t)/t;
+		  psin=psin*psin1;
+	  }
+	y=psin;
+	return y;
+}
 
 double f_chan(double x, double a,int n)
 {

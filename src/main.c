@@ -29,95 +29,71 @@ void interp(double x0, double x1, int nx, double y0, double y1, int ny)
 
 	for(i = 0; i < nx; i++)
 		for(j = 0; j < ny; j++)
-			a[i][j] = f(x0+hx*(double)i, y0+hy*(double)j)/coef;
-	
-	for(k = 0; k <= 1000; k++)
-	{
+			a[i][j] = f(hx*(double)i, hy*(double)j)/coef;
 
-/*			for(j=1;j<=ny-1;j++)	*/
-/*				a[i][j] = 	 a[i-1][j+1]*phi(-1.,1.) + a[i][j+1]*phi(0.,1.) + a[i+1][j+1]*phi(1.,1.)	*/
-/*						+a[i-1][j]*phi(-1.,0.) 				+ a[i+1][j]*phi(-1.,0.)		*/
-/*						+a[i-1][j+1]*phi(-1.,1.) + a[i][j-1]*phi(0.,1.) + a[i+1][j-1]*phi(1.,-1.)	*/
-/*						-f(hx*(double)i, hy*(double)j);	*/
-		//внутри области
-		for(i=1;i<nx-1;i++)
-			for(j=1;j<=ny-1;j++)
-				an[i][j] = 	-a[i-1][j+1]*c2 - a[i][j+1]*c1  - a[i+1][j+1]*c2
-						-a[i-1][j]*c1 			- a[i+1][j]*c1
-						-a[i-1][j-1]*c2 - a[i][j-1]*c1  - a[i+1][j-1]*c2
-						+f(hx*(double)i, hy*(double)j);
-		//на границах
-		i=0;
-		for(j=1;j<ny-1;j++)
-			an[i][j] = 	 - a[i][j+1]*c1  - a[i+1][j+1]*c2
-					 		 - a[i+1][j]*c1
-					 - a[i][j-1]*c1  - a[i+1][j-1]*c2
-					 +f(hx*(double)i, hy*(double)j);
-		i=nx-1;
-		for(j=1;j<ny-1;j++)
-			an[i][j] = 	-a[i-1][j+1]*c2 - a[i][j+1]*c1  
-					-a[i-1][j]*c1
-					-a[i-1][j-1]*c2 - a[i][j-1]*c1
-					+f(hx*(double)i, hy*(double)j);
-		
-		j=0;
-		for(i=1;i<nx-1;i++)
-			an[i][j] = 	-a[i-1][j+1]*c2 - a[i][j+1]*c1  - a[i+1][j+1]*c2
-					-a[i-1][j]*c1 			- a[i+1][j]*c1
-					
-					+f(hx*(double)i, hy*(double)j);
-		
-		j=ny-1;
-		for(i=1;i<nx-1;i++)
-			an[i][j] = 	
-					-a[i-1][j]*c1 			- a[i+1][j]*c1
-					-a[i-1][j-1]*c2 - a[i][j-1]*c1  - a[i+1][j-1]*c2
-					+f(hx*(double)i, hy*(double)j);
-					
-		
-		i=0;j=0;
-			an[i][j] = 	- a[i][j+1]*c1  - a[i+1][j+1]*c2
-							- a[i+1][j]*c1
-					
-					+f(hx*(double)i, hy*(double)j);
-					
-		i=0;j=ny;
-			an[i][j] = 	
-							 - a[i+1][j]*c1
-					 - a[i][j-1]*c1  - a[i+1][j-1]*c2
-					+f(hx*(double)i, hy*(double)j);
-		
-		i=nx;j=0;
-			an[i][j] = 	-a[i-1][j+1]*c2 - a[i][j+1]*c1  
-					-a[i-1][j]*c1 			
-					
-					+f(hx*(double)i, hy*(double)j);
-					
-		i=nx;j=ny;
-			an[i][j] = 	
-					-a[i-1][j]*c1 			
-					-a[i-1][j-1]*c2 - a[i][j-1]*c1  
-					+f(hx*(double)i, hy*(double)j);
-		
-		//копирование
-		for(i=0;i<nx;i++)
-			for(j=0;j<ny;j++)
-				a[i][j] = an[i][j];		
-	}
-	double x, y;
-	for(x=x0+hx; x<x1-hx; x+=0.01)
-		for(y=y0+hy; y<y1-hy; y+=0.01)
+	double x, y, z;//z[nx*8][ny*8];
+	FILE *outp;
+	outp = fopen("./output/plot", "w");
+	int m,n,p;
+	for(m=0;m<(nx-1)*8;m++)
+		for(n=0;n<(ny-1)*8;n++)
 		{
-			i = (int)(x-x0)/hx;
-			j = (int)(y-y0)/hy;
+			i=m/8;
+			j=n/8;
 
-printf("%f %f %f\n",x,y,a[i-1][j+1]*phi((x-x0)/hx-1.,(y-y0)/hy+1.) + a[i][j+1]*phi((x-x0)/hx,(y-y0)/hy+1.) + a[i+1][j+1]*phi((x-x0)/hx+1.,(y-y0)/hy+1.)	
-			+a[i-1][j]*phi((x-x0)/hx-1.,(y-y0)/hy) 	+ a[i][j]*phi((x-x0)/hx,(y-y0)/hy) + a[i+1][j]*phi((x-x0)/hx+1.,(y-y0)/hy)		
-			+a[i-1][j+1]*phi((x-x0)/hx-1.,(y-y0)/hy-1.) + a[i][j-1]*phi((x-x0)/hx,(y-y0)/hy-1.) + a[i+1][j-1]*phi((x-x0)/hx+1.,(y-y0)/hy-1.)	
-					-f(hx*(double)i, hy*(double)j));				
+			z=0.;
 			
-		}	
+			
+			
+			if(i>0 && i<nx-2 && j>0 && j<ny-2)
+				for(k=-1;k<=2;k++)
+					for(p=-1;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+			
+			if(i==0 && j>0 && j<ny-2)
+				for(k=0;k<=2;k++)
+					for(p=-1;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
 
+			if(i==nx-2 && j>0 && j<ny-2)
+				for(k=-1;k<=1;k++)
+					for(p=-1;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+			
+			if(i>0 && i<nx-2 && j==0)
+				for(k=-1;k<=2;k++)
+					for(p=0;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+						
+			if(i>0 && i<nx-2 && j==ny-2)
+				for(k=-1;k<=2;k++)
+					for(p=-1;p<=1;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+					
+			if(i==0 && j==0)
+				for(k=0;k<=2;k++)
+					for(p=0;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+						
+			if(i==0 && j==ny-2)
+				for(k=0;k<=2;k++)
+					for(p=-1;p<=1;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+
+			if(i==nx-2 && j==0)
+				for(k=-1;k<=1;k++)
+					for(p=0;p<=2;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+
+			if(i==nx-2 && j==ny-2)
+				for(k=-1;k<=1;k++)
+					for(p=-1;p<=1;p++)
+						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+
+
+			fprintf(outp,"%f %f %f\n", (hx+1.)/64.*(double)m, (hy+1.)/64.*(double)n, z/1.828);
+			//fprintf(outp,"%f %f %f\n",(hx+1.)/64.*(double)m,(hy+1.)/64.*(double)n,z/f((hx+1.)/64.*(double)m,(hy+1.)/64.*(double)n));
+		}
 }
 
 
