@@ -30,7 +30,25 @@ void interp(double x0, double x1, int nx, double y0, double y1, int ny)
 	for(i = 0; i < nx; i++)
 		for(j = 0; j < ny; j++)
 			a[i][j] = f(hx*(double)i, hy*(double)j)/coef;
-
+	/*
+	//0.807221
+	for(i = 0; i < nx; i++)
+	{
+		a[i][0] /= 0.807221;
+		a[i][ny-1] /= 0.807221;
+	}	
+	
+	for(j = 0; j < nx; j++)
+	{
+		a[0][j] /= 0.807221;
+		a[nx-1][j] /= 0.807221;
+	}
+	
+	a[0][0] 	/= 0.652648;
+	a[nx-1][0] 	/= 0.652648;
+	a[0][ny-1] 	/= 0.652648;
+	a[nx-1][ny-1] 	/= 0.652648;*/
+	
 	double x, y, z;//z[nx*8][ny*8];
 	FILE *outp;
 	outp = fopen("./output/plot", "w");
@@ -43,17 +61,18 @@ void interp(double x0, double x1, int nx, double y0, double y1, int ny)
 
 			z=0.;
 			
-			
-			
 			if(i>0 && i<nx-2 && j>0 && j<ny-2)
 				for(k=-1;k<=2;k++)
 					for(p=-1;p<=2;p++)
 						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
 			
 			if(i==0 && j>0 && j<ny-2)
+			{
 				for(k=0;k<=2;k++)
 					for(p=-1;p<=2;p++)
 						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
+				z+=a[i][j+p]*phi((double)(m%8)/8.-2.0,(double)(n%8)/8.-(double)p);
+			}
 
 			if(i==nx-2 && j>0 && j<ny-2)
 				for(k=-1;k<=1;k++)
@@ -64,7 +83,7 @@ void interp(double x0, double x1, int nx, double y0, double y1, int ny)
 				for(k=-1;k<=2;k++)
 					for(p=0;p<=2;p++)
 						z+=a[i+k][j+p]*phi((double)(m%8)/8.-(double)k,(double)(n%8)/8.-(double)p);
-						
+
 			if(i>0 && i<nx-2 && j==ny-2)
 				for(k=-1;k<=2;k++)
 					for(p=-1;p<=1;p++)
