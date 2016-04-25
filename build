@@ -1,0 +1,5 @@
+#/bin/bash
+
+gcc ./src/main.c -o ./bin/main -g -lm
+zenity --info --text "Done with code $?"
+
